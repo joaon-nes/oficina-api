@@ -1,5 +1,7 @@
 package com.oficina.backend.modules.ordemservico;
 
+import com.oficina.backend.core.exceptions.RecursoNaoEncontradoException;
+import com.oficina.backend.core.exceptions.RegraNegocioException;
 import com.oficina.backend.modules.cliente.Cliente;
 import com.oficina.backend.modules.cliente.ClienteRepository;
 import com.oficina.backend.modules.ordemservico.dto.OsRequestDTO;
@@ -20,9 +22,14 @@ public class OrdemServicoService {
 
     public OsResponseDTO abrirOS(OsRequestDTO dto) {
         Cliente cliente = clienteRepository.findById(dto.clienteId())
-                .orElseThrow(() -> new RuntimeException("Cliente não encontrado."));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Cliente não encontrado."));
+
         Veiculo veiculo = veiculoRepository.findById(dto.veiculoId())
-                .orElseThrow(() -> new RuntimeException("Veículo não encontrado."));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado."));
+
+        if (!veiculo.getCliente().getId().equals(cliente.getId())) {
+            throw new RegraNegocioException("O veículo informado não pertence a este cliente.");
+        }
 
         OrdemServico os = OrdemServico.builder()
                 .cliente(cliente)

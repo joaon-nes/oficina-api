@@ -1,5 +1,6 @@
 package com.oficina.backend.modules.cliente;
 
+import com.oficina.backend.core.exceptions.RegraNegocioException;
 import com.oficina.backend.modules.cliente.dto.ClienteRequestDTO;
 import com.oficina.backend.modules.cliente.dto.ClienteResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,7 @@ public class ClienteService {
 
     public ClienteResponseDTO criar(ClienteRequestDTO dto) {
         if (repository.existsByCpf(dto.cpf())) {
-            throw new RuntimeException("CPF já registado na base de dados.");
+            throw new RegraNegocioException("CPF já registado na base de dados.");
         }
         Cliente cliente = Cliente.builder()
                 .nome(dto.nome())

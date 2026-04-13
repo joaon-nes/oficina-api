@@ -1,5 +1,7 @@
 package com.oficina.backend.modules.veiculo;
 
+import com.oficina.backend.core.exceptions.RecursoNaoEncontradoException;
+import com.oficina.backend.core.exceptions.RegraNegocioException;
 import com.oficina.backend.modules.cliente.Cliente;
 import com.oficina.backend.modules.cliente.ClienteRepository;
 import com.oficina.backend.modules.veiculo.dto.VeiculoRequestDTO;
@@ -18,11 +20,11 @@ public class VeiculoService {
 
     public VeiculoResponseDTO cadastrar(VeiculoRequestDTO dto) {
         if (veiculoRepository.existsByPlaca(dto.placa())) {
-            throw new RuntimeException("Placa já registada no sistema.");
+            throw new RegraNegocioException("Placa já registada no sistema.");
         }
 
         Cliente cliente = clienteRepository.findById(dto.clienteId())
-                .orElseThrow(() -> new RuntimeException("Cliente não encontrado."));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Cliente não encontrado."));
 
         Veiculo veiculo = Veiculo.builder()
                 .placa(dto.placa())

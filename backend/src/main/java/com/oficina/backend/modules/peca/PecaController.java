@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -15,11 +16,13 @@ public class PecaController {
 
     private final PecaService service;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<PecaDTO> cadastrar(@RequestBody @Valid PecaDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.cadastrar(dto));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'MECANICO')")
     @GetMapping
     public ResponseEntity<List<PecaDTO>> listarTodas() {
         return ResponseEntity.ok(service.listarTodas());
